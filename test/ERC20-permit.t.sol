@@ -15,6 +15,8 @@ contract DreamTokenTest2 is Test {
     ERC20 drm;
 
     function setUp() public {
+        //console.log("[+] setUP()");
+
         drm = new ERC20("DREAM", "DRM");
 
         alicePK = 0xa11ce;
@@ -22,6 +24,7 @@ contract DreamTokenTest2 is Test {
 
         bobPK = 0xb0b;
         bob = vm.addr(bobPK);
+
         emit log_address(alice);
         emit log_address(bob);
 
@@ -30,6 +33,8 @@ contract DreamTokenTest2 is Test {
     }
     
     function testPermit() public {
+        console.log("[+] testPermit()");
+
         bytes32 structHash = keccak256(abi.encode(
             keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)"), 
             alice, 
@@ -37,18 +42,23 @@ contract DreamTokenTest2 is Test {
             10 ether, 
             0, 
             1 days
-            ));
+        ));
+
         bytes32 hash = drm._toTypedDataHash(structHash);
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(alicePK, hash);
 
+        console.log("=======");
         assertEq(drm.nonces(alice), 0);
         drm.permit(alice, address(this), 10 ether, 1 days, v, r, s);
 
+        console.log("=======");
         assertEq(drm.allowance(alice, address(this)), 10 ether);
         assertEq(drm.nonces(alice), 1);
     }
 
     function testFailExpiredPermit() public {
+        console.log("[+] testFailExpiredPermit()");
+
         bytes32 hash = keccak256(abi.encode(
             keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)"), 
             alice, 
@@ -66,6 +76,8 @@ contract DreamTokenTest2 is Test {
     }
 
     function testFailInvalidSigner() public {
+        console.log("[+] testFailInvalidSigner()");
+
         bytes32 hash = keccak256(abi.encode(
             keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)"), 
             alice, 
@@ -81,6 +93,8 @@ contract DreamTokenTest2 is Test {
     }
 
     function testFailInvalidNonce() public {
+        console.log("[+] testFailInvalidNonce()");
+
         bytes32 hash = keccak256(abi.encode(
             keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)"), 
             alice, 
