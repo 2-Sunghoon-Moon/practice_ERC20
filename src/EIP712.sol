@@ -6,7 +6,7 @@ contract EIP712 {
     string private _name;
     string public version_;
 
-    bytes32 private constant SALT_IN_DOMAIN_SEPARATOR = keccak256("this is salt, not sugar.");
+    bytes32 private constant SALT_IN_DOMAIN_SEPARATOR = keccak256("-");
     bytes32 private constant DOMAIN_SEPARATOR = keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract,bytes32 salt)");
     bytes32 private constant PERMIT_HASH_STRUCT = keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
     
