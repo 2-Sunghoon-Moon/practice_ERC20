@@ -53,9 +53,11 @@ contract ERC20 is IERC20, EIP712 {
         return _name;
     }
 
+
     function symbol() external view returns (string memory) {
         return _symbol;
     }
+
 
     function decimals() public view returns (uint8) {
         return 18;
@@ -66,17 +68,21 @@ contract ERC20 is IERC20, EIP712 {
         return _totalSupply;
     }
 
+
     function balanceOf(address account) public view virtual override returns (uint256) {
         return _balances[account];
     }
+
 
     function transfer(address to, uint256 amount) external returns (bool) {
         require(_balances[msg.sender] >= amount);
         require(_paused == false);
 
         _balances[msg.sender] = _balances[msg.sender] - amount;
-        _balances[to] = _balances[to] + amount;          // Integer Overflow 가능?
+        _balances[to] = _balances[to] + amount;      
 
+        emit Transfer(msg.sender, to, amount);
+        
         return true;
     }
 
@@ -89,9 +95,14 @@ contract ERC20 is IERC20, EIP712 {
 
         _allowances[msg.sender][spender] = amount;
 
+        emit Approval(msg.sender, spender, amount);
+
         return true;
     }
+
+
     function transferFrom(address from, address to, uint256 amount) external returns (bool) {
+        require(_paused == false);
         require(_allowances[from][to] >= amount);
         require(_balances[from] >= amount);
 
@@ -102,14 +113,15 @@ contract ERC20 is IERC20, EIP712 {
         _balances[to] = _balances[to] + amount;
 
 
-        
+        emit Transfer(from, to, amount);
+
+        return true;
     }
 
 
     function pause() public onlyOwenr returns (bool) {
         _paused = true;
 
-        // emit Paused(_msgSender());
         return true;
     }
 
@@ -119,7 +131,7 @@ contract ERC20 is IERC20, EIP712 {
 
 
 
-    function nonces(address _addr) public returns (uint) {
+    function nonces(address _addr) public view returns (uint) {
         return _nonces[_addr];
     }
 
@@ -134,12 +146,9 @@ contract ERC20 is IERC20, EIP712 {
         _allowances[owner][spender] = value;
         _nonces[owner]++;
 
+        emit Approval(owner, spender, value);
+
     }
-
-
-
-
-
 
 
 }
